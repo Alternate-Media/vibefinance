@@ -14,6 +14,19 @@ Built with a "Security First" mindset, it is designed to be self-hosted, ensurin
 
 ---
 
+## 📑 Table of Contents
+- [📸 Dashboard Preview](#-dashboard-preview)
+- [🎯 Core Mission](#-core-mission)
+- [🛡️ Security & Engineering Standards](#-security--engineering-standards)
+- [🚀 Features (MVP)](#-features-mvp)
+- [🛠️ The Stack](#-the-stack)
+- [📜 Development Commandments](#-development-commandments)
+- [🏁 Getting Started](#-getting-started)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+---
+
 ## 📸 Dashboard Preview
 *(Screenshots coming soon...)*
 
@@ -42,7 +55,7 @@ VibeFinance is built with **uncompromising standards**. We treat personal financ
 
 ### ⚙️ Engineering Principles
 *   **Data Precision:** Floating-point arithmetic is banned. All money is `Decimal` (2 places).
-*   **Testing Triad:** Strict TDD, Property-Based Testing (Hypothesis), and Mutation Testing (mutmut).
+*   **Testing Triad:** Strict TDD, Property-Based Testing (Hypothesis), and Mutation Testing (mutmut). See [TESTING_STRATEGY.md](./docs/TESTING_STRATEGY.md) for details.
 *   **Agentic Development:** The codebase is structured with `.context.md` files and micro-modules to be easily understood by AI agents.
 
 *(See [DECISIONS.md](./DECISIONS.md) for a deep dive into our architectural trade-offs.)*

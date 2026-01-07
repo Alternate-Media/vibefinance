@@ -1,0 +1,42 @@
+[project]
+name = "vibefinance-backend"
+version = "0.1.0"
+description = "FastAPI backend for VibeFinance"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlmodel",
+    "pydantic-settings",
+    "psycopg[binary]",
+    "cryptography",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "python-multipart",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "hypothesis",
+    "mutmut",
+    "pytest-cov",
+    "polyfactory",
+]
+lint = [
+    "ruff",
+    "mypy",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.mypy]
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

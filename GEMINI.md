@@ -46,6 +46,7 @@
 *   **Strict TDD:** Tests are written *before* implementation.
 *   **Mutation Testing:** We use `mutmut`. 100% Code Coverage is not enough; we need 100% "Mutant Kill Rate" on critical paths.
 *   **Property-Based Testing:** We use `Hypothesis` for all financial math to fuzz-test edge cases.
+*   👉 **[Detailed Testing Strategy](./docs/TESTING_STRATEGY.md)**
 
 ### 4. API & Frontend
 *   **Pattern:** **BFF (Backend-for-Frontend)**.
