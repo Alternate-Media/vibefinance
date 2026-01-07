@@ -2,7 +2,8 @@ import pytest
 from backend.services.auth import AuthService
 from backend.tests.data.auth_test_data import PASSWORD_TEST_CASES, TOKEN_PAYLOAD_TEST_CASES
 
-# Data-Driven Testing: Parametrize passwords from external data file
+# @TESTCASE: AuthService - Password Integrity
+# Expectation: Plaintext passwords are never stored; verification works only with correct plaintext.
 @pytest.mark.parametrize("password", PASSWORD_TEST_CASES)
 def test_password_hashing_and_verification(auth_service: AuthService, password: str):
     """
@@ -19,7 +20,8 @@ def test_password_hashing_and_verification(auth_service: AuthService, password: 
     # 3. Verify false for incorrect password
     assert auth_service.verify_password(password + "_wrong", hashed) is False
 
-# Data-Driven Testing: Parametrize token payloads from external data file
+# @TESTCASE: AuthService - Token Cycle
+# Expectation: Access tokens are generated as strings and contain all payload data and expiration.
 @pytest.mark.parametrize("payload", TOKEN_PAYLOAD_TEST_CASES)
 def test_token_creation_and_decoding(auth_service: AuthService, payload: dict):
     """
@@ -38,6 +40,8 @@ def test_token_creation_and_decoding(auth_service: AuthService, payload: dict):
     # Check that expiration was added
     assert "exp" in decoded
 
+# @TESTCASE: AuthService - Invalid Tokens
+# Expectation: Malformed or invalid tokens return None (Fail Secure).
 def test_decode_invalid_token(auth_service: AuthService):
     """
     Ensure invalid tokens return None (Fail Secure).

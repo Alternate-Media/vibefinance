@@ -32,6 +32,7 @@ help: ## Show this help message
 	@echo "  test-integration     Run integration tests"
 	@echo "  test-mutation        Run mutmut mutation tests"
 	@echo "  test-hypothesis      Run property-based hypothesis tests"
+	@echo "  gen-test-docs        Generate test case documentation from @TESTCASE annotations"
 	@echo ""
 	@echo "Infrastructure Targets:"
 	@echo "  docker-up            Start all services in Docker"
@@ -51,19 +52,19 @@ setup-frontend: ## Install frontend dependencies (Stub)
 
 test: test-unit ## Run all tests
 
-test-unit: ## Run unit tests
-	# Running from root is fine for pytest as it handles discovery well, 
+test-unit: gen-test-docs ## Run unit tests
+	# Running from root is fine for pytest as it handles discovery well,
 	# but we point to the dir to be safe.
 	$(PYTEST) $(BACKEND_DIR)/tests/unit
 
-test-integration: ## Run integration tests
+test-integration: gen-test-docs ## Run integration tests
 	$(PYTEST) $(BACKEND_DIR)/tests/integration
 
-test-mutation: ## Run mutation tests
+test-mutation: gen-test-docs ## Run mutation tests
 	# mutmut must run from backend dir to find pyproject.toml config automatically
 	cd $(BACKEND_DIR) && $(REL_VENV_BIN)/mutmut run --paths-to-mutate=services
 
-test-hypothesis: ## Run property-based tests
+test-hypothesis: gen-test-docs ## Run property-based tests
 	$(PYTEST) -m hypothesis $(BACKEND_DIR)/tests
 
 lint: ## Run code quality tools (ruff, mypy)
@@ -93,3 +94,6 @@ clean: ## Clean up temporary files
 	@find $(BACKEND_DIR) -type d -name ".pytest_cache" -exec rm -rf {} +
 	@find $(BACKEND_DIR) -type d -name ".mypy_cache" -exec rm -rf {} +
 	@find $(BACKEND_DIR) -type d -name ".ruff_cache" -exec rm -rf {} +
+
+gen-test-docs: ## Generate test documentation
+	python3 scripts/generate_test_docs.py

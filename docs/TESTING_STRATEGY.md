@@ -47,12 +47,44 @@ The final layer ensures the user experience is flawless and performance meets st
 *   **Coverage:** **100% Coverage** of critical user paths.
 *   **Goal:** Prevent re-occurrence of resolved bugs.
 
-### 3.2 UI & Performance Testing
+### 3.2 UI & Performance Testing (Stub)
+*   **Status:** 🚧 Pending Implementation
 *   **Tool:** **Playwright** (Browser-based testing).
 *   **UI Testing:** Validates the Vue.js frontend, user interactions, and visual integrity across resolutions.
 *   **Performance:**
     *   Measures load times, rendering performance, and API latency under simulated user load.
     *   Ensures the "Vibe" (fluidity/responsiveness) remains intact.
+
+---
+
+## 🔄 TDD Workflow & Documentation
+
+We enforce a strict **Test-First** workflow that doubles as our living documentation.
+
+### 4.1 The Cycle (Red-Green-Refactor)
+1.  **Write the English Test Case:** Before writing code, describe the scenario in plain English using the `@TESTCASE` annotation within the test file.
+2.  **Write the Failing Test:** Implement the test logic. Run it to confirm it fails (Red).
+3.  **Implement Logic:** Write the minimum code necessary to pass the test (Green).
+4.  **Refactor:** Optimize code and tests while keeping tests passing.
+5.  **Verify:** Run mutation tests to ensure the test is robust.
+
+### 4.2 The `@TESTCASE` Annotation
+Every test function **MUST** be preceded by a specific comment block. This serves two purposes: intent clarification and auto-generation of test documentation.
+
+**Format:**
+```python
+# @TESTCASE: <Category> - <Short Description>
+# Expectation: <What should happen>
+def test_user_cannot_login_with_invalid_password():
+    ...
+```
+
+### 4.3 Auto-Generated Documentation
+We utilize a custom tool to parse these annotations and generate Markdown documentation.
+*   **Module-Wise:** `backend/tests/<module>/README.md` (Generated)
+*   **Global:** `docs/reports/TEST_CASES.md` (Generated)
+
+**Command:** `make gen-test-docs` (Scans `backend/tests/` recursively for `@TESTCASE` tags)
 
 ---
 
