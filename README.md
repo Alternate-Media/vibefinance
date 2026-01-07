@@ -114,18 +114,27 @@ Contributors must adhere to our 8 core principles:
 
 ## 🏁 Getting Started
 
-*(Instructions to be updated as the MVP is built)*
-
 ### Prerequisites
-*   Docker & Docker Compose
+*   **Docker & Docker Compose** (for full stack run)
+*   **uv** (for backend python management)
+*   **Node.js/npm** (for frontend)
 
 ### Quick Start
 ```bash
 git clone https://github.com/Alternate-Media/vibefinance.git
 cd vibefinance
-docker-compose up --build
+make setup         # Installs all dependencies
+make docker-up     # Starts DB and Infra
+make run-backend   # Starts local backend server
 ```
-Access the dashboard at `http://localhost:80` (or your configured port).
+Access the dashboard at `http://localhost:80` (via Docker) or `http://localhost:8000` (Local Backend).
+
+## 🧑‍💻 Development
+We use a **Makefile** to drive the dev workflow:
+*   `make test` - Run unit tests.
+*   `make lint` - Run type checks and linters.
+*   `make format` - Auto-format code.
+*   `make help` - Show all available commands.
 
 ---
 

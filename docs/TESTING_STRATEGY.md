@@ -2,61 +2,80 @@
 
 This document serves as the **Single Source of Truth** for all testing activities in VibeFinance. We follow a "Defense in Depth" approach to testing, ensuring that financial data is handled with extreme precision and security.
 
-## 1. The "Testing Triad"
+Our testing strategy is divided into three distinct levels of verification.
 
-Our pipeline enforces three layers of verification:
+## 🏆 Level 1: Unit Tests (The Testing Triad)
 
-1.  **Strict TDD (Unit Tests):** Tests must be written *before* implementation. We use `pytest` for execution.
+This layer focuses on logic verification, mathematical correctness, and security boundaries within the code.
+
+### 1.1 The Triad
+1.  **Strict TDD:** Tests must be written *before* implementation. We use `pytest` for execution.
 2.  **Mutation Testing:** We use `mutmut` to ensure our tests actually catch bugs. We aim for a **100% Mutation Kill Rate** on critical financial logic.
 3.  **Property-Based Testing:** We use `Hypothesis` to fuzz-test mathematical functions (e.g., currency conversion, tax calculation) against millions of generated inputs.
 
-## 2. Unit Test Case Rules
+### 1.2 Unit Test Rules
+*   **Data-Driven Testing:** Use `pytest.mark.parametrize` to inject multiple inputs. Never hardcode single values for range logic.
+*   **Factories over Fixtures:** Use `polyfactory` factories (e.g., `UserFactory.build()`) to decouple tests from DB schema changes.
+*   **Mocking Boundaries:** Mock all external I/O (Database, API calls, Filesystem).
 
-All unit tests must adhere to the following rules:
+---
 
-### 2.1. Data-Driven Testing
-**Goal:** Avoid "Magic Numbers" and "Happy Path" bias.
-*   **Rule:** Never hardcode a single test value if the logic handles a range.
-*   **Tool:** Use `pytest.mark.parametrize` to inject multiple inputs.
-*   **Example:**
-    ```python
-    @pytest.mark.parametrize("amount, expected", [
-        (Decimal("100.00"), Decimal("10.00")),
-        (Decimal("0.00"), Decimal("0.00")),
-        (Decimal("-50.00"), ValueError),
-    ])
-    def test_calculate_tax(amount, expected):
-        ...
-    ```
+## 🔗 Level 2: Integration Tests (API Testing)
 
-### 2.2. Factories over Fixtures
-**Goal:** Decouple tests from database schema changes.
-*   **Rule:** Do not manually instantiate models (e.g., `User(id=1, name="John")`).
-*   **Tool:** Use `polyfactory` factories (e.g., `UserFactory.build()`).
-*   **Why:** If the `User` model adds a required field, you update the Factory once, not 500 tests.
+This layer validates the interaction between the application and its dependencies (PostgreSQL, Reverse Proxy) in a controlled CI environment.
 
-### 2.3. Mocking Boundaries
-**Goal:** Test *your* code, not the library's.
-*   **Rule:** Mock all external I/O (Database, API calls, Filesystem).
-*   **Exception:** For integration tests, use a real (Dockerized) test database, never mocks.
+### 2.1 Execution Strategy
+*   **Environment:** Tests run in a CI pipeline with real, dockerized dependencies (Postgres, Nginx).
+*   **Tooling:** A specialized **Testing Agent Application** (HTTP Client) acts as the test driver, simulating API requests.
+*   **Batching:**
+    *   **Standard CI Run:** A small, randomized batch of API tests is invoked on every commit to ensure rapid feedback.
+    *   **Full Suite:** An option exists to trigger the full integration suite (e.g., nightly or before merge).
 
-### 2.4. Explicit Assertions
-**Goal:** Clarity on failure.
-*   **Rule:** Use simple `assert` statements with descriptive error messages if the condition is complex.
+### 2.2 Scope
+*   Verifies end-to-end API workflows (e.g., "Create User -> Login -> Add Transaction").
+*   Validates database constraints, transaction rollbacks, and error handling.
+*   Ensures the API contract (BFF) remains consistent.
 
-## 3. Directory Structure
+---
+
+## 🖥️ Level 3: Regression, UI & Performance Tests
+
+The final layer ensures the user experience is flawless and performance meets standards.
+
+### 3.1 Regression Testing
+*   **Mandate:** **100% Automation** for all regression scenarios.
+*   **Coverage:** **100% Coverage** of critical user paths.
+*   **Goal:** Prevent re-occurrence of resolved bugs.
+
+### 3.2 UI & Performance Testing
+*   **Tool:** **Playwright** (Browser-based testing).
+*   **UI Testing:** Validates the Vue.js frontend, user interactions, and visual integrity across resolutions.
+*   **Performance:**
+    *   Measures load times, rendering performance, and API latency under simulated user load.
+    *   Ensures the "Vibe" (fluidity/responsiveness) remains intact.
+
+---
+
+## 📂 Directory Structure
 
 ```
 backend/tests/
-├── conftest.py          # Global Fixtures (Settings, DB Session)
-├── factories.py         # Polyfactory Model Factories
-├── test_auth_service.py # Unit tests for Auth Service
-└── models/              # Unit tests for Database Models
-    └── test_user.py
+├── unit/                # Level 1: Unit Tests
+│   ├── conftest.py
+│   ├── factories.py
+│   └── ...
+├── integration/         # Level 2: API/Integration Tests
+│   └── ...
+└── ui/                  # Level 3: Playwright Tests
+    └── ...
 ```
 
-## 4. Execution Commands
+## ⚡ Execution Commands
 
-*   **Run All Tests:** `pytest`
-*   **Run Mutation Tests:** `mutmut run --paths-to-mutate=backend/services`
-*   **Run Property Tests:** `pytest -m hypothesis`
+All tests are executed via the project **Makefile**.
+
+*   **Level 1 (Unit):** `make test-unit`
+*   **Level 1 (Mutation):** `make test-mutation`
+*   **Level 1 (Property):** `make test-hypothesis`
+*   **Level 2 (Integration):** `make test-integration`
+*   **Level 3 (UI):** `npx playwright test` (Integration pending in Makefile)

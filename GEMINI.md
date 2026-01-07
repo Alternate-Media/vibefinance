@@ -76,5 +76,14 @@ For a detailed analysis of architectural trade-offs (e.g., Security vs. Search, 
 *   **DB:** PostgreSQL 16+.
 *   **Infra:** Docker Compose (Single Node).
 
+## ⚙️ Development Workflow
+We use a **Makefile** to standardize all development tasks. Do not run manual `pip`, `npm`, or `docker` commands unless debugging.
+
+*   **Setup:** `make setup` (Installs all deps + venv)
+*   **Run Backend:** `make run-backend` (FastAPI with hot-reload)
+*   **Run Tests:** `make test` (Unit), `make test-integration`, `make test-mutation`
+*   **Lint/Format:** `make lint` / `make format`
+*   **Docker:** `make docker-up` / `make docker-down`
+
 ---
 *Updated: 2026-01-08*
