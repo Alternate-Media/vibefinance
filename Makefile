@@ -44,7 +44,7 @@ setup-backend: ## Install backend dependencies with uv
 	@command -v uv >/dev/null 2>&1 || { echo "Error: uv is not installed. Please install it: https://github.com/astral-sh/uv"; exit 1; }
 	@echo "Installing Backend dependencies with uv..."
 	uv venv $(VENV)
-	uv pip install --python $(VENV) -e "$(BACKEND_DIR)[test,lint]"
+	uv pip install --python $(PYTHON) -r $(BACKEND_DIR)/pyproject.toml
 	@echo "Backend dependencies installed."
 
 setup-frontend: ## Install frontend dependencies (Stub)
