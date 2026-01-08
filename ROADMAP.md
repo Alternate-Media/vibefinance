@@ -27,9 +27,3 @@ This document outlines the planned features, infrastructure enhancements, and se
 - [ ] Interactive Asset Allocation charts.
 - [ ] Dark Mode / Custom Themes.
 - [ ] Multi-currency support (with INR as default).
-
-## 🤖 Active Agent Tasks
-- [x] Evaluate Project State ([Report](./docs/planning/evaluation_report.md)) <!-- AGENT -->
-- [ ] Documentation & Decision Analysis ([Plan](./docs/planning/implementation_plan.md)) <!-- AGENT -->
-- [ ] Initialize Frontend (Vue 3 + Vite) <!-- AGENT -->
-- [ ] Fix Backend User Model (Optimistic Locking) <!-- AGENT -->
