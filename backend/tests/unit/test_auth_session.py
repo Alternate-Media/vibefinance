@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytest
 from unittest.mock import MagicMock
 from backend.services.auth import AuthService
@@ -65,7 +65,7 @@ def test_verify_session_scenarios(auth_service: AuthService, case_id, is_active,
     
     auth_service.decode_token = MagicMock(return_value={"sub": "123"})
     
-    mock_session = UserSession(token_hash="hash", user_id=123, is_active=is_active, expires_at=datetime.utcnow() + timedelta(hours=expiry_delta_hours))
+    mock_session = UserSession(token_hash="hash", user_id=123, is_active=is_active, expires_at=datetime.now(timezone.utc) + timedelta(hours=expiry_delta_hours))
     mock_db.exec.return_value.first.return_value = mock_session
     
     if expect_success:
@@ -105,14 +105,14 @@ def test_concurrent_valid_sessions(auth_service: AuthService):
                 token_hash="hash_mobile",
                 user_id=user_id,
                 is_active=True,
-                expires_at=datetime.utcnow() + timedelta(hours=1),
+                expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
             )
         if token_hash == "hash_web":
             return UserSession(
                 token_hash="hash_web",
                 user_id=user_id,
                 is_active=True,
-                expires_at=datetime.utcnow() + timedelta(hours=1),
+                expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
             )
         return None
 
@@ -130,7 +130,7 @@ def test_concurrent_valid_sessions(auth_service: AuthService):
         token_hash="hash_mobile",
         user_id=user_id,
         is_active=True,
-        expires_at=datetime.utcnow() + timedelta(hours=1),
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
     )
     mock_db.exec.return_value.first.return_value = mock_session_1
 
@@ -142,7 +142,7 @@ def test_concurrent_valid_sessions(auth_service: AuthService):
         token_hash="hash_web",
         user_id=user_id,
         is_active=True,
-        expires_at=datetime.utcnow() + timedelta(hours=1),
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
     )
     mock_db.exec.return_value.first.return_value = mock_session_2
 

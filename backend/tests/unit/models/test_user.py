@@ -1,6 +1,6 @@
 import pytest
 from sqlmodel import SQLModel
-from backend.tests.unit.factories import UserFactory
+from backend.tests.factories import UserFactory
 
 # TDD: We define the test before the model exists.
 # This import will fail until we create backend/models/user.py

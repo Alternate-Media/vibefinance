@@ -26,3 +26,18 @@ def auth_service(mock_settings):
     Provides the AuthService initialized with mock settings.
     """
     return AuthService(mock_settings)
+
+from sqlmodel import create_engine, SQLModel, Session
+from sqlalchemy.pool import StaticPool
+
+@pytest.fixture(name="session")
+def session_fixture():
+    # In-memory SQLite for speed and isolation
+    engine = create_engine(
+        "sqlite://", 
+        connect_args={"check_same_thread": False}, 
+        poolclass=StaticPool
+    )
+    SQLModel.metadata.create_all(engine)
+    with Session(engine) as session:
+        yield session

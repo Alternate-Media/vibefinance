@@ -64,3 +64,12 @@ This document logs critical architectural decisions, the specific conflicts/pain
     *   Database: `NUMERIC(20, 2)` (or higher precision).
     *   Backend: `decimal.Decimal` only.
     *   API: Money is serialized as `String` (e.g., `"100.50"`) to preserve precision during JSON definition.
+
+## 8. Password Security (Bcrypt Truncation)
+
+*   **The Constraint:** **Bcrypt 72-Byte Limit.**
+*   **The Conflict:** Bcrypt silently truncates passwords longer than 72 bytes, meaning `very_long_password_A` and `very_long_password_B` could verify as the same hash effectively weakening security for long passphrases.
+*   **The Decision:** **SHA256 Pre-hashing.**
+    *   Passwords are effectively hashed twice: `Bcrypt(SHA256(plaintext_password))`.
+    *   SHA256 compresses any length input into a fixed 32-byte string (well within Bcrypt's limit).
+    *   **Mitigation:** This adds a negligible computation cost for significant correctness and security.

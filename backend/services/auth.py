@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Any
+import hashlib
 from jose import jwt
 from passlib.context import CryptContext
 from sqlmodel import Session
@@ -23,11 +24,16 @@ class AuthService:
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """Verifies a plain password against its hash."""
-        return pwd_context.verify(plain_password, hashed_password)
+        # Pre-hash to handle long passwords (bcrypt limit)
+        pwd_bytes = plain_password.encode('utf-8')
+        pre_hash = hashlib.sha256(pwd_bytes).hexdigest()
+        return pwd_context.verify(pre_hash, hashed_password)
 
     def get_password_hash(self, password: str) -> str:
         """Generates a bcrypt hash of the password."""
-        return pwd_context.hash(password)
+        pwd_bytes = password.encode('utf-8')
+        pre_hash = hashlib.sha256(pwd_bytes).hexdigest()
+        return pwd_context.hash(pre_hash)
 
     def create_access_token(
         self,
@@ -75,7 +81,7 @@ class AuthService:
                 user_id=user_id,
                 device_info="Unknown",  # TODO: device info from request
                 expires_at=expire,
-                created_at=datetime.utcnow(),
+                created_at=datetime.now(timezone.utc),
             )
 
             # Note: real implementation needs hashlib.
@@ -122,7 +128,7 @@ class AuthService:
         if not session_record.is_active:
             raise Exception("Session Revoked")
             
-        if session_record.expires_at < datetime.utcnow():
+        if session_record.expires_at < datetime.now(timezone.utc):
             raise Exception("Session Expired")
             
         return session_record
