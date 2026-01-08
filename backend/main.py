@@ -3,12 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic_settings import BaseSettings
 from typing import List
 
+
 class Settings(BaseSettings):
     PROJECT_NAME: str = "VibeFinance API"
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost", "http://localhost:8080"]
 
     class Config:
         case_sensitive = True
+
 
 settings = Settings()
 
@@ -27,6 +29,7 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
 
 @app.get("/api/health")
 def health_check():

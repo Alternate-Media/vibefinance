@@ -46,3 +46,21 @@ This document logs critical architectural decisions, the specific conflicts/pain
 *   **The Decision:** **Hybrid Storage Strategy.**
     *   **User Data (Wallets/Txns):** Strictly Append-Only (Audit Trail).
     *   **Market Data (External):** Snapshot/Prune. We keep daily closes history but overwrite real-time intra-day prices.
+
+## 6. Data Consistency (Optimistic Locking)
+
+*   **The Constraint:** **Prevent Lost Updates** in concurrent financial transactions.
+*   **The Conflict:** Locking rows (Pessimistic) kills performance and creates deadlocks. Ignoring it leads to data corruption (Last-Write-Wins overwriting balances).
+*   **The Decision:** **Optimistic Locking (Enforced via `version_id`).**
+    *   Every database model MUST have a `version_id` column.
+    *   Updates must include the `version_id` in the `WHERE` clause. If 0 rows are updated, raise `StaleDataError`.
+    *   **Mitigation:** Frontend handles retry logic for non-critical stale data errors.
+
+## 7. Numerical Precision (No Floats)
+
+*   **The Constraint:** **Zero Floating-Point Errors.**
+*   **The Conflict:** Python's `float` and standard JSON numbers are IEEE 754 (imprecise). `0.1 + 0.2 != 0.3`.
+*   **The Decision:** **Exclusive use of `Decimal`.**
+    *   Database: `NUMERIC(20, 2)` (or higher precision).
+    *   Backend: `decimal.Decimal` only.
+    *   API: Money is serialized as `String` (e.g., `"100.50"`) to preserve precision during JSON definition.

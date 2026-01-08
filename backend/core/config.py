@@ -2,6 +2,7 @@ from pydantic import AnyHttpUrl, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Union
 
+
 class Settings(BaseSettings):
     PROJECT_NAME: str = "VibeFinance API"
     ENVIRONMENT: str = "development"
@@ -11,7 +12,7 @@ class Settings(BaseSettings):
     SECRET_KEY: SecretStr
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
+
     # Encryption - Key for Application Level Encryption (ALE)
     ENCRYPTION_KEY: SecretStr
 
@@ -31,10 +32,9 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     model_config = SettingsConfigDict(
-        case_sensitive=True, 
-        env_file=".env",
-        extra="ignore"
+        case_sensitive=True, env_file=".env", extra="ignore"
     )
+
 
 def get_settings() -> Settings:
     """

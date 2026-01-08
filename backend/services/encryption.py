@@ -1,9 +1,6 @@
-import base64
 import os
 from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from typing import Optional
+
 
 class EncryptionService:
     """
@@ -40,6 +37,7 @@ class EncryptionService:
             return ciphertext
         return self._fernet.decrypt(ciphertext.encode()).decode()
 
+
 # Factory function for Dependency Injection
 def get_encryption_service() -> EncryptionService:
     # In a real scenario, this would come from an environment variable or secret manager
@@ -49,6 +47,6 @@ def get_encryption_service() -> EncryptionService:
         # Fallback for development ONLY - in production, this should fail secure
         # Note: In production, the "Fail Secure" commandment would require raising an error here.
         # However, for initial setup, we provide a warning/default.
-        key = Fernet.generate_key().decode() 
-    
+        key = Fernet.generate_key().decode()
+
     return EncryptionService(key)

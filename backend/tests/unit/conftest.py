@@ -3,6 +3,7 @@ from backend.core.config import Settings
 from backend.services.auth import AuthService
 from pydantic import SecretStr
 
+
 @pytest.fixture(scope="session")
 def mock_settings():
     """
@@ -15,8 +16,9 @@ def mock_settings():
         DATABASE_URL="sqlite:///:memory:",
         ALGORITHM="HS256",
         ACCESS_TOKEN_EXPIRE_MINUTES=30,
-        ENVIRONMENT="testing"
+        ENVIRONMENT="testing",
     )
+
 
 @pytest.fixture(scope="session")
 def auth_service(mock_settings):
